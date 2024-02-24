@@ -5,6 +5,6 @@
         /// <summary>
         /// Mensaje de error a retornar
         /// </summary>
-        public string? Error { get; set; }
+        public string error { get; set; }
     }
 }

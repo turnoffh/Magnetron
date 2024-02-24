@@ -5,6 +5,8 @@ using TestMagnetron.Helpers;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Reflection.Metadata;
+using System.Net.Mail;
+using System.Reflection;
 
 namespace TestMagnetron.Controllers
 {
@@ -12,59 +14,200 @@ namespace TestMagnetron.Controllers
     [ApiController]
     public class PersonaController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<Persona> GetPersonas()
+        #region "Create"
+        /// <summary>
+        /// Metodo para agregar una persona.
+        /// </summary>
+        /// <param name="per">Persona a agregar</param>
+        /// <returns>Modelo de la persona recien agregada</returns>
+        /// <response code="409">Si la persona ya existe</response>
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
+        [HttpPost("AgregarUsuario")]
+        public IActionResult AddUser([FromBody] PersonaInputVM per)
         {
-            return PersonaHelper.ObtenerPersonas();
-            
+            Persona personaRetorno;
+
+            try
+            {
+                personaRetorno = PersonaHelper.AgregarPersona(per);
+            }
+            catch (Exception ex)
+            {
+                string message = "Error al agregar al usuario: " + ex.Message;
+                if (ex is InvalidOperationException)
+                {
+                    return StatusCode((int)HttpStatusCode.Conflict, new ErrorModel { error = message });
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
+                }
+            }
+
+            return Ok(personaRetorno);
         }
-        [HttpGet("PersonaPorDocumento")]
-        public Persona GetPersonasByDocumento(string documento)
+
+        #endregion
+        #region "Read"
+        /// <summary>
+        /// Metodo usado para obtener las personas guardadas.
+        /// </summary>
+        /// <returns>Una lista de personas.</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Persona>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetPersonas()
         {
-            if (string.IsNullOrEmpty(documento))
+            try
             {
-                _logger.LogError("Documento no valido");
-                throw new BadRe
+                return Ok(PersonaHelper.ObtenerPersonas());
             }
-            else
+            catch (Exception ex)
             {
-                return
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
             }
-            
         }
 
         /// <summary>
-        /// Retorna un Codigo Http basado en un tipo de error
+        /// Metodo usado para obtener una persona por numero de documento.
         /// </summary>
-        /// <param name="ex">Exception</param>
-        /// <param name="message">Mensaje de Error</param>
-        /// <param name="methodName">Nombre del metodo</param>
-        /// <param name=" receivedObject">objeto recibido</param>
-        /// <returns>Error Model</returns>
-        private ObjectResult ReturnError(Exception ex, string message, string methodName, object receivedObject)
+        /// <param name="documento">Documento a buscar</param>
+        /// <returns>Persona buscada.</returns>
+        [HttpGet("PersonaPorDocumento")]
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetPersonasPorDocumento(string documento)
         {
-            var httpStatusCode = HttpStatusCode.InternalServerError;
-            switch (ex)
+            try
             {
-                case System.Data.DuplicateNameException:
-                    httpStatusCode = HttpStatusCode.Conflict;
-                    break;
-                case UnauthorizedException:
-                    httpStatusCode = HttpStatusCode.Unauthorized;
-                    break;
-                case ForbiddenException:
-                    httpStatusCode = HttpStatusCode.Forbidden;
-                    break;
-                case BadRequestException:
-                    httpStatusCode = HttpStatusCode.BadRequest;
-                    break;
-                default:
-                    httpStatusCode = HttpStatusCode.InternalServerError;
-                    break;
+                if (string.IsNullOrEmpty(documento))
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, new ErrorModel { error = "Número de documento vacio" });
+                }
+                else
+                {
+                    return Ok(PersonaHelper.ObtenerPersonaPorDocumento(documento));
+                }
             }
-
-            return StatusCode((int)httpStatusCode, new ErrorModel { error = message });
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
+            }
         }
 
+        /// <summary>
+        /// Metodo usado para obtener una persona por nombre.
+        /// </summary>
+        /// <param name="nombre">Nombre a buscar</param>
+        /// <returns>Una lista de personas.</returns>
+        [HttpGet("PersonaPorNombre")]
+        [ProducesResponseType(typeof(List<Persona>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetPersonasPorNombreoApellido(string nombre)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nombre))
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, new ErrorModel { error = "Valor a buscar vacio" });
+                }
+                else
+                {
+                    return Ok(PersonaHelper.ObtenerPersonaPorNombreOApellido(nombre));
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
+            }
+        }
+        #endregion
+        #region "Update"
+        /// <summary>
+        /// Metodo para actualizar una persona, se debe enviar el Id de base de datos o el número de documento
+        /// </summary>
+        /// <param name="id">Id del registro en la BD de la persona a actualizar (opcional)</param>
+        /// <param name="documento">Documento de la persona a actualizar (opcional)</param>
+        /// <param name="persona">Objeto con los valores nuevos a actualizar</param>
+        /// <returns>Persona actualizada.</returns>
+        /// <response code="409">Si la persona no existe</response>
+        [HttpPut("ActualizarPersona")]
+        [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
+        public IActionResult UpdatePersona([FromBody] PersonaUpdateVM persona, int id = 0, string? documento = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(documento) && id == 0 )
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, new ErrorModel { error = "Debe enviar un Id o un Número de Documento" });
+                }
+                else
+                {
+                    return Ok(PersonaHelper.ActualizarPersona(persona, id, documento));
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Error al actualizar el usuario: " + ex.Message;
+                if (ex is InvalidOperationException)
+                {
+                    return StatusCode((int)HttpStatusCode.Conflict, new ErrorModel { error = message });
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
+                }
+            }
+        }
+        #endregion
+        #region "Delete"
+        /// <summary>
+        /// Metodo para eliminar una persona, se debe enviar el Id de base de datos o el número de documento
+        /// </summary>
+        /// <param name="id">Id del registro en la BD de la persona a actualizar (opcional)</param>
+        /// <param name="documento">Documento de la persona a actualizar (opcional)</param>
+        /// <returns>Si se elimina o no la persona</returns>
+        /// <response code="409">Si la persona no existe</response>
+        [HttpDelete("EliminarPersona")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
+        public IActionResult DeletePersona(int id = 0, string? documento = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(documento) && id == 0)
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, new ErrorModel { error = "Debe enviar un Id o un Número de Documento" });
+                }
+                else
+                {
+                    return Ok(PersonaHelper.EliminarPersona(id, documento));
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Error al eliminar el usuario: " + ex.Message;
+                if (ex is InvalidOperationException)
+                {
+                    return StatusCode((int)HttpStatusCode.Conflict, new ErrorModel { error = message });
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError, new ErrorModel { error = ex.Message });
+                }
+            }
+        }
+        #endregion
     }
 }
