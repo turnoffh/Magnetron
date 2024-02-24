@@ -364,3 +364,5 @@ FodyWeavers.xsd
 #Docker for now
 docker-compose.yml
 entrypoint.sh
+/MagnetronUnitTests/obj/Debug/net6.0/MagnetronUnitTests.csproj.AssemblyReference.cache
+/.vs/TestMagnetron/v17/.suo
