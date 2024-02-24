@@ -5,6 +5,13 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMagnetron", "TestMagnetron\TestMagnetron.csproj", "{88122F22-2CDE-4F83-98AC-4010FD11CF3B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9377F3E1-1FE6-4D66-B2BC-24D306292078}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagnetronUnitTests", "MagnetronUnitTests\MagnetronUnitTests.csproj", "{855D7816-9333-4CBD-94DF-200726AD2156}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +22,10 @@ Global
 		{88122F22-2CDE-4F83-98AC-4010FD11CF3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88122F22-2CDE-4F83-98AC-4010FD11CF3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88122F22-2CDE-4F83-98AC-4010FD11CF3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{855D7816-9333-4CBD-94DF-200726AD2156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{855D7816-9333-4CBD-94DF-200726AD2156}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{855D7816-9333-4CBD-94DF-200726AD2156}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{855D7816-9333-4CBD-94DF-200726AD2156}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

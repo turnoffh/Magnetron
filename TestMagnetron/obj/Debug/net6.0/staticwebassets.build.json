@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "//I3Kqi8jmmgUvaSwYAWSIR5XW6wdI66ht/Xj1cn22o=",
+  "Source": "TestMagnetron",
+  "BasePath": "_content/TestMagnetron",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
