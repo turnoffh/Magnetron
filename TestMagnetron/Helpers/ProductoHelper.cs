@@ -1,5 +1,4 @@
-﻿using System.Runtime.ConstrainedExecution;
-using TestMagnetron.Models;
+﻿using TestMagnetron.Models;
 namespace TestMagnetron.Helpers
 {
     /// <summary>

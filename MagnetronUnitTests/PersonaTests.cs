@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TestMagnetron.Controllers;
 using TestMagnetron.Models;
+using TestMagnetron;
 
 namespace MagnetronUnitTests
 {

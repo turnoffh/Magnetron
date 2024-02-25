@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using TestMagnetron.Models;
+using TestMagnetron.Models.Views;
 
-namespace TestMagnetron.Models
+namespace TestMagnetron
 {
     public partial class TestMagnetronContext : DbContext
     {
