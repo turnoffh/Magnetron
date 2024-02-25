@@ -168,8 +168,8 @@ namespace TestMagnetron.Controllers
         /// <summary>
         /// Metodo para eliminar una persona, se debe enviar el Id de base de datos o el número de documento
         /// </summary>
-        /// <param name="id">Id del registro en la BD de la persona a actualizar (opcional)</param>
-        /// <param name="documento">Documento de la persona a actualizar (opcional)</param>
+        /// <param name="id">Id del registro en la BD de la persona a eliminar (opcional)</param>
+        /// <param name="documento">Documento de la persona a eliminar (opcional)</param>
         /// <returns>Si se elimina o no la persona</returns>
         /// <response code="409">Si la persona no existe</response>
         [HttpDelete("EliminarPersona")]

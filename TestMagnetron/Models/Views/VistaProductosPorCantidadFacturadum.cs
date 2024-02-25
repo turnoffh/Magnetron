@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestMagnetron.Models
+namespace TestMagnetron.Models.Views
 {
     public partial class VistaProductosPorCantidadFacturadum
     {
