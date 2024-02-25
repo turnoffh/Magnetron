@@ -75,6 +75,10 @@ namespace TestMagnetron.Helpers
                 using (var db = new TestMagnetronContext())//Usamos el context de la base de datos
                 {
                     List<Persona> persona = db.Personas.Where(p => p.PerDocumento.ToLower().Contains(doc.ToLower())).ToList(); // buscamos si el documento existe en base de datos
+                    if (persona is null || persona.Count == 0)
+                    {
+                        throw new InvalidOperationException("No se encontro ningun registro con el id '" + doc + " '.");
+                    }
                     return persona;
                 }
             }
@@ -88,7 +92,7 @@ namespace TestMagnetron.Helpers
         /// <summary>
         /// Metodo para obtener una persona por nombre
         /// </summary>
-        /// <param name="doc">Nombre de la persona a buscar</param>
+        /// <param name="nombre">Nombre de la persona a buscar</param>
         /// <returns>Persona encontrada</returns>
         public static List<Persona> ObtenerPersonaPorNombreOApellido(string nombre)
         {
@@ -97,6 +101,10 @@ namespace TestMagnetron.Helpers
                 using (var db = new TestMagnetronContext())//Usamos el context de la base de datos
                 {
                     List<Persona> persona = db.Personas.Where(p => p.PerNombre.ToLower().Contains(nombre) || p.PerApellido.ToLower().Contains(nombre)).ToList(); // buscamos el nombre en base de datos 
+                    if (persona is null || persona.Count == 0)
+                    {
+                        throw new InvalidOperationException("No se encontro ningun registro con el parametro '" + nombre + " '.");
+                    }
                     return persona;
                 }
             }
@@ -161,12 +169,11 @@ namespace TestMagnetron.Helpers
         }
 
         /// <summary>
-        /// Metodo para actualizar una persona de la BD
+        /// Metodo para eliminar una persona de la BD
         /// </summary>
-        /// <param name="id">Id del registro en la BD de la persona a actualizar (opcional)</param>
-        /// <param name="documento">Documento de la persona a actualizar (opcional)</param>
-        /// <param name="persona">Objeto con los valores nuevos a actualizar</param>
-        /// <returns>Persona actualizada.</returns>
+        /// <param name="id">Id del registro en la BD de la persona a eliminar (opcional)</param>
+        /// <param name="documento">Documento de la persona a eliminar (opcional)</param>
+        /// <returns>Persona Eliminada.</returns>
         public static string EliminarPersona(int id, string? documento)
         {
             try
@@ -174,7 +181,7 @@ namespace TestMagnetron.Helpers
                 using (var db = new TestMagnetronContext())
                 {
                     Persona perEliminada;
-                    //validamos que la persona a actualizar exista en la base de datos
+                    //validamos que la persona a eliminar exista en la base de datos
                     if (id > 0)
                     {
                         perEliminada = db.Personas.Where(p => p.PerId == id).FirstOrDefault();

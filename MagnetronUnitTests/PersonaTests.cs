@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Runtime.ConstrainedExecution;
-using TestMagnetron;
 using TestMagnetron.Controllers;
 using TestMagnetron.Models;
 
@@ -61,19 +57,19 @@ namespace MagnetronUnitTests
                     PerTipoDocumento = 20,
                     PerDocumento = "ABC123456789"
                 };
-                var response = controller.AddUser(persona);
+                var response = controller.AgregarPersona(persona);
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(500), "Debio retornar error ya que el tipo de documento no existe");
 
                 persona.PerTipoDocumento = 1;
-                response = controller.AddUser(persona);
+                response = controller.AgregarPersona(persona);
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(409), "Debio retornar error ya que la persona ya esta agregada");
 
                 persona.PerDocumento = "XYZ789";
-                response = controller.AddUser(persona);
+                response = controller.AgregarPersona(persona);
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(200), "Debio agregar a la persona");
@@ -92,10 +88,10 @@ namespace MagnetronUnitTests
         {
             try
             {
-                var response = controller.GetPersonas();
+                var response = controller.ObtenerPersonas();
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
-                Assert.That(objRes.StatusCode, Is.EqualTo(200), "Debio retornar error ya que el tipo de documento no existe");
+                Assert.That(objRes.StatusCode, Is.EqualTo(200), "Debio retornar status OK");
                 List<Persona> pList = objRes.Value as List<Persona>;
                 Assert.That(pList.Count(), Is.GreaterThanOrEqualTo(2), "Debe haber como minimo dos registros creados en el setup");
 
@@ -114,11 +110,11 @@ namespace MagnetronUnitTests
         {
             try
             {
-                var response = controller.GetPersonasPorDocumento("");
+                var response = controller.ObtenerPersonasPorDocumento("");
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(400), "Debio retornar error ya que el Documento esta vacio");
-                response = controller.GetPersonasPorDocumento("ABC");
+                response = controller.ObtenerPersonasPorDocumento("ABC");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 List<Persona> pList = objRes.Value as List<Persona>;
@@ -139,11 +135,11 @@ namespace MagnetronUnitTests
         {
             try
             {
-                var response = controller.GetPersonasPorNombreoApellido("");
+                var response = controller.ObtenerPersonasPorNombreoApellido("");
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
-                Assert.That(objRes.StatusCode, Is.EqualTo(400), "Debio retornar error ya que el Documento esta vacio");
-                response = controller.GetPersonasPorNombreoApellido("tEsT UsEr 2");
+                Assert.That(objRes.StatusCode, Is.EqualTo(400), "Debio retornar error ya que el nombre esta vacio");
+                response = controller.ObtenerPersonasPorNombreoApellido("tEsT UsEr 2");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 List<Persona> pList = objRes.Value as List<Persona>;
@@ -169,20 +165,20 @@ namespace MagnetronUnitTests
                     PerNombre = "David",
                     PerTipoDocumento = 999
                 };
-                var response = controller.UpdatePersona(per);
+                var response = controller.ActualizarPersona(per);
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(400), "Debio retornar error ya que es necesario el id o documento");
-                response = controller.UpdatePersona(per, 0, "XYZ");
+                response = controller.ActualizarPersona(per, 0, "XYZ");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(409), "Debio retornar error ya que la persona no existe");
-                response = controller.UpdatePersona(per, 0, "ABC1223456789");
+                response = controller.ActualizarPersona(per, 0, "ABC1223456789");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(500), "Debio retornar error ya que el tipo de documento no es valido");
                 per.PerTipoDocumento = 2;
-                response = controller.UpdatePersona(per, 0, "ABC1223456789");
+                response = controller.ActualizarPersona(per, 0, "ABC1223456789");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(200), "Debio Actualizar la persona");
@@ -201,15 +197,15 @@ namespace MagnetronUnitTests
         {
             try
             {
-                var response = controller.DeletePersona(0,"");
+                var response = controller.EliminarPersona(0,"");
                 Assert.IsNotNull(response);
                 ObjectResult objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(400), "Debio retornar error ya que es necesario el id o documento");
-                response = controller.DeletePersona(0, "XYZ");
+                response = controller.EliminarPersona(0, "XYZ");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(409), "Debio retornar error ya que la persona no existe");
-                response = controller.DeletePersona( 0, "ABC1223456789");
+                response = controller.EliminarPersona( 0, "ABC1223456789");
                 Assert.IsNotNull(response);
                 objRes = response as ObjectResult;
                 Assert.That(objRes.StatusCode, Is.EqualTo(200), "Debio eliminar la persona");
