@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestMagnetron.Models;
 using TestMagnetron.Helpers;
-using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Reflection.Metadata;
-using System.Net.Mail;
-using System.Reflection;
 
 namespace TestMagnetron.Controllers
 {
@@ -26,7 +21,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
         [HttpPost("AgregarUsuario")]
-        public IActionResult AddUser([FromBody] PersonaInputVM per)
+        public IActionResult AgregarPersona([FromBody] PersonaInputVM per)
         {
             Persona personaRetorno;
 
@@ -60,7 +55,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(IEnumerable<Persona>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetPersonas()
+        public IActionResult ObtenerPersonas()
         {
             try
             {
@@ -81,7 +76,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(Persona), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetPersonasPorDocumento(string documento)
+        public IActionResult ObtenerPersonasPorDocumento(string documento)
         {
             try
             {
@@ -109,7 +104,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(List<Persona>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetPersonasPorNombreoApellido(string nombre)
+        public IActionResult ObtenerPersonasPorNombreoApellido(string nombre)
         {
             try
             {
@@ -142,7 +137,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
-        public IActionResult UpdatePersona([FromBody] PersonaUpdateVM persona, int id = 0, string? documento = null)
+        public IActionResult ActualizarPersona([FromBody] PersonaUpdateVM persona, int id = 0, string? documento = null)
         {
             try
             {
@@ -182,7 +177,7 @@ namespace TestMagnetron.Controllers
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorModel), (int)HttpStatusCode.Conflict)]
-        public IActionResult DeletePersona(int id = 0, string? documento = null)
+        public IActionResult EliminarPersona(int id = 0, string? documento = null)
         {
             try
             {
